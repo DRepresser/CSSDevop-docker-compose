@@ -38,10 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'corsheaders',
     'main',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,11 +84,11 @@ DATABASES = {
     },
     'postgres': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB'), # 'resume_db'
-        'USER': os.environ.get('POSTGRES_USER'), # 'postgres',
-        'PASSWORD': 'secret', # os.environ.get('POSTGRES_PASSWORD'), # '1234',
-        'HOST': 'db', # os.environ.get('POSTGRES_HOST'), # 'db', #'postgres',
-        'PORT': '5432',
+        'NAME': os.environ.get('POSTGRES_DB', 'resume_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'secret'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     },
     'mariadb': {
         'ENGINE': 'django.db.backends.mysql',
@@ -97,8 +100,21 @@ DATABASES = {
     }
 }
 
-DATABASES['default'] = DATABASES['sqlite']
 DATABASES['default'] = DATABASES['postgres']
+
+# CORS
+CORS_ALLOW_ALL_ORIGINS = True  # สำหรับ Lab เท่านั้น
+
+# Redis Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 
 
 # Password validation

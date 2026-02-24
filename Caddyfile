@@ -1,0 +1,28 @@
+# Caddyfile - Reverse proxy + static file server
+:80 {
+    # Proxy API requests to Backend (must be before file_server)
+    handle /api/* {
+        reverse_proxy backend:8000
+    }
+
+    # Proxy Django Admin
+    handle /admin/* {
+        reverse_proxy backend:8000
+    }
+
+    # Django static/media files
+    handle /static/* {
+        reverse_proxy backend:8000
+    }
+
+    handle /media/* {
+        reverse_proxy backend:8000
+    }
+
+    # Serve React SPA for everything else
+    handle {
+        root * /srv
+        file_server
+        try_files {path} /index.html
+    }
+}
